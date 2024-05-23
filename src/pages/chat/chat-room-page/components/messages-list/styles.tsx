@@ -118,6 +118,7 @@ export const ChatMessage = styled.div`
   position: relative;
   white-space: pre-line;
   display: flex;
+  flex-direction: column;
 
   @media screen and (min-width: 1301px) {
     max-width: 65%;
@@ -135,7 +136,7 @@ export const ChatMessage = styled.div`
 export const ChatMessageFiller = styled.span`
   width: 65px;
   display: inline-block;
-  height: 3px;
+  height: 20px;
   background: transparent;
 `;
 
@@ -148,4 +149,5 @@ export const ChatMessageFooter = styled.span`
   color: ${(props) => props.theme.common.subHeadingColor};
   font-size: 0.7rem;
   font-weight: 500;
+  // top: 20px;
 `;

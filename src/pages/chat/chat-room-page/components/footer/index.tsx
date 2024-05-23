@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import Icon from "common/components/icons";
 import {
   AttachButton,
@@ -27,12 +27,25 @@ export default function Footer() {
   const messages = getMessages();
   const lastMessage = messages[messages.length - 1];
   const isOpponent = lastMessage ? lastMessage.isOpponent : false;
+  const [file, setFile] = useState<File>();
+  const [imageSrc, setImageSrc] = useState<string>();
+  const [pdfSrc, setPdfSrc] = useState<string>();
+  const [thumbnail, setThumbnail] = useState<string>();
+
 
   const { items, setItems } = useContext(MyContext);
+
+  const fileInputRef = useRef(null);
+  const cameraRef = useRef(null);
+  const imageRef = useRef(null);
+  const contactRef = useRef(null);
 
 
   interface CustomMessage extends Message {
     isOpponent: boolean;
+    file?: File;
+    imageurl?: string;  
+    pdfurl?: string;
   }
 
   const sendMessage = (username) => {
@@ -44,12 +57,64 @@ export default function Footer() {
       messageStatus: "SENT", // Provide a default value
       isOpponent: isOpponent,
       username: username,
+      file: file,
+      imageurl: imageSrc,
+      pdfurl: pdfSrc,
     };
     // messages.push(newMessage);
     setItems([...items, newMessage]);
     setMessage("");
-    // console.log(messages[messages.length - 1])
+    setFile(undefined);
+    setImageSrc(undefined);
+    console.log(messages[messages.length - 1].file?.name)
+    console.log(newMessage)
   };
+
+  const handleButtonClick = (label) => {
+    if (label === "Choose document") {
+      if (fileInputRef.current) {
+        (fileInputRef.current as HTMLInputElement).click();
+      }
+    } else if (label === "Choose image") {
+      if (imageRef.current) {
+        (imageRef.current as HTMLInputElement).click();
+      }
+    } else if (label === "Use camera") {
+      if (cameraRef.current) {
+        (cameraRef.current as HTMLInputElement).click();
+      }
+    } else if (label === "Choose room") {
+      alert("Choose room");
+    } else if (label === "Choose contact") {
+      // if (contactRef.current) {
+      //   (contactRef.current as HTMLInputElement).click();
+      // }
+      alert("Choose contact");
+    } else {
+      alert("Unknown button");
+    }
+  };
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+      setImageSrc(URL.createObjectURL(file));
+      // console.log(file.name);
+    }
+  };
+
+  const handleFileChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFile(file);
+      setPdfSrc(URL.createObjectURL(file));
+      // console.log(file.name);
+    }
+  };
+
+
 
 
   const params = useParams();
@@ -63,9 +128,39 @@ export default function Footer() {
         </AttachButton>
         <ButtonsContainer>
           {attachButtons.map((btn) => (
-            <Button showIcon={showIcons} key={btn.label}>
-              <Icon id={btn.icon} />
-            </Button>
+            <>
+              <Button showIcon={showIcons} key={btn.label} onClick={() => handleButtonClick(btn.label)} >
+                <Icon id={btn.icon} />
+              </Button>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                ref={cameraRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              // value={''}
+              />
+              <input
+                type="file"
+                ref={imageRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                value={''} />
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange2}
+                value={''} />
+              <input
+                type="file"
+                ref={contactRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                value={''} />
+            </>
+
           ))}
         </ButtonsContainer>
       </IconsWrapper>

@@ -8,6 +8,9 @@ export type Message = {
   messageStatus: MessageStatus;
   isOpponent: boolean;
   username: string;
+  file?: File;
+  imageurl?: string;
+  pdfurl?: string;
 };
 
 export const messages: Message[] = [

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import Icon from "common/components/icons";
 import useScrollToBottom from "./hooks/useScrollToBottom";
 import { getMessages, Message } from "./data/get-messages";
-import {messages} from "./data/get-messages"; 
+import { messages } from "./data/get-messages";
 import {
   ChatMessage,
   ChatMessageFiller,
@@ -33,7 +33,7 @@ export default function MessagesList(props: MessagesListProps) {
   //   return getMessages();
   //   // eslint-disable-next-line
   // }, [params.id]);
-  
+
   const data = useMemo(() => {
     // return messages;
     return items;
@@ -44,7 +44,8 @@ export default function MessagesList(props: MessagesListProps) {
 
   const filteredMessages = data.filter((message) => message.username === params.id);
 
-  console.log(filteredMessages)
+  // console.log(filteredMessages)
+
 
 
   const { containerRef, lastMessageRef } = useScrollToBottom(
@@ -87,6 +88,21 @@ const SingleMessage = forwardRef((props: { message: Message }, ref: any) => {
       className={message.isOpponent ? "chat__msg--received" : "chat__msg--sent"}
       ref={ref}
     >
+      {message?.imageurl && (
+        <img src={message?.imageurl} alt="file" style={{ width: "100%", height: "150px", objectFit: "cover" }} />
+      )
+      }
+      {message?.pdfurl && (
+        <div>
+          <iframe
+            title="PDF Viewer"
+            src={message?.pdfurl}
+            width="100%"
+            height="150px"
+            style={{ border: 'none' }}
+          />
+        </div>
+      )}
       <span>{message.body}</span>
       <ChatMessageFiller />
       <ChatMessageFooter>
@@ -94,9 +110,8 @@ const SingleMessage = forwardRef((props: { message: Message }, ref: any) => {
         {!message.isOpponent && (
           <Icon
             id={`${message.messageStatus === "SENT" ? "singleTick" : "doubleTick"}`}
-            className={`chat__msg-status-icon ${
-              message.messageStatus === "READ" ? "chat__msg-status-icon--blue" : ""
-            }`}
+            className={`chat__msg-status-icon ${message.messageStatus === "READ" ? "chat__msg-status-icon--blue" : ""
+              }`}
           />
         )}
       </ChatMessageFooter>
