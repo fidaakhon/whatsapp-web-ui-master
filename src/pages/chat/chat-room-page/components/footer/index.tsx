@@ -44,7 +44,7 @@ export default function Footer() {
   interface CustomMessage extends Message {
     isOpponent: boolean;
     file?: File;
-    imageurl?: string;  
+    imageurl?: string;
     pdfurl?: string;
   }
 
@@ -101,6 +101,7 @@ export default function Footer() {
     if (file) {
       setFile(file);
       setImageSrc(URL.createObjectURL(file));
+      setShowIcons(!showIcons)
       // console.log(file.name);
     }
   };
@@ -162,6 +163,12 @@ export default function Footer() {
             </>
 
           ))}
+          {imageSrc && (
+            <>
+              <img src={imageSrc} alt="preview" style={{ width: '100px', height: '100px' }} />
+              <button style={{position:"relative", left:"60px", background:"red", width:"25px", height:"25px", borderRadius:"50%"}} onClick={() => setImageSrc(undefined)}>X</button>
+            </>
+          )}
         </ButtonsContainer>
       </IconsWrapper>
       <Input placeholder="Type a message here .." value={message} onChange={
