@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Icon from "common/components/icons";
 import {
   AttachButton,
@@ -6,12 +6,16 @@ import {
   ButtonsContainer,
   IconsWrapper,
   Input,
+  PopupButton,
+  PopupContent,
+  PopupOverlay,
   SendMessageButton,
   Wrapper,
 } from "./styles";
 import { Message, getMessages } from "../messages-list/data/get-messages";
 import { useParams } from "react-router-dom";
 import { MyContext } from "../my-context/MyContext";
+
 
 const attachButtons = [
   { icon: "attachRooms", label: "Choose room" },
@@ -24,13 +28,10 @@ const attachButtons = [
 export default function Footer() {
   const [showIcons, setShowIcons] = useState(false);
   const [message, setMessage] = useState("");
-  const messages = getMessages();
-  const lastMessage = messages[messages.length - 1];
-  const isOpponent = lastMessage ? lastMessage.isOpponent : false;
   const [file, setFile] = useState<File>();
   const [imageSrc, setImageSrc] = useState<string>();
   const [pdfSrc, setPdfSrc] = useState<string>();
-  const [thumbnail, setThumbnail] = useState<string>();
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
 
   const { items, setItems } = useContext(MyContext);
@@ -55,7 +56,7 @@ export default function Footer() {
       date: new Date().toLocaleDateString(),
       timestamp: new Date().getHours() + ":" + new Date().getMinutes(),
       messageStatus: "SENT", // Provide a default value
-      isOpponent: isOpponent,
+      isOpponent: true,
       username: username,
       file: file,
       imageurl: imageSrc,
@@ -66,8 +67,37 @@ export default function Footer() {
     setMessage("");
     setFile(undefined);
     setImageSrc(undefined);
-    console.log(messages[messages.length - 1].file?.name)
-    console.log(newMessage)
+    // console.log(messages[messages.length - 1].file?.name)
+    // console.log(newMessage)
+  };
+  const sendMessage1 = (username) => {
+    const newMessage: CustomMessage = {
+      id: (items.length + 1).toString(),
+      body: message,
+      date: new Date().toLocaleDateString(),
+      timestamp: new Date().getHours() + ":" + new Date().getMinutes(),
+      messageStatus: "SENT", // Provide a default value
+      isOpponent: false,
+      username: username,
+      file: file,
+      imageurl: imageSrc,
+      pdfurl: pdfSrc,
+    };
+    // messages.push(newMessage);
+    setItems([...items, newMessage]);
+    setMessage("");
+    setFile(undefined);
+    setImageSrc(undefined);
+    // console.log(messages[messages.length - 1].file?.name)
+    // console.log(newMessage)
+  };
+
+  const handleSendClick = () => {
+    setIsPopupVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsPopupVisible(false);
   };
 
   const handleButtonClick = (label) => {
@@ -111,11 +141,8 @@ export default function Footer() {
     if (file) {
       setFile(file);
       setPdfSrc(URL.createObjectURL(file));
-      // console.log(file.name);
     }
   };
-
-
 
 
   const params = useParams();
@@ -166,7 +193,7 @@ export default function Footer() {
           {imageSrc && (
             <>
               <img src={imageSrc} alt="preview" style={{ width: '100px', height: '100px' }} />
-              <button style={{position:"relative", left:"60px", background:"red", width:"25px", height:"25px", borderRadius:"50%"}} onClick={() => setImageSrc(undefined)}>X</button>
+              <button style={{ position: "relative", left: "60px", background: "red", width: "25px", height: "25px", borderRadius: "50%" }} onClick={() => setImageSrc(undefined)}>X</button>
             </>
           )}
         </ButtonsContainer>
@@ -174,7 +201,22 @@ export default function Footer() {
       <Input placeholder="Type a message here .." value={message} onChange={
         (e) => setMessage(e.target.value)
       } />
-      <SendMessageButton onClick={() => sendMessage(username)}>
+      {isPopupVisible && (
+        <PopupOverlay>
+          <PopupContent>
+            <PopupButton onClick={() => {
+              sendMessage(username);
+              handleCancel();
+            }}>Person1</PopupButton>
+            <PopupButton onClick={() => {
+              sendMessage1(username);
+              handleCancel();
+            }}>Person2</PopupButton>
+            <PopupButton onClick={handleCancel}>Cancel</PopupButton>
+          </PopupContent>
+        </PopupOverlay>
+      )}
+      <SendMessageButton onClick={handleSendClick}>
         <Icon id="send" className="icon" />
       </SendMessageButton>
     </Wrapper>
