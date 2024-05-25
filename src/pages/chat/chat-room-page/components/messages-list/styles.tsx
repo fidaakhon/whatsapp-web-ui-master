@@ -6,7 +6,8 @@ export const Container = styled.div`
   /* background: #e4dcd4; */
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 20px 5% 2pc;
+  padding: 20px 5% 2px;
+  // height: 80vh;
 
   .icon {
     color: ${(props) => props.theme.common.subHeadingColor};
