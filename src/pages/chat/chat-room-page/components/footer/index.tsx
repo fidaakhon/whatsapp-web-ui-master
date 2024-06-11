@@ -67,6 +67,7 @@ export default function Footer() {
     setMessage("");
     setFile(undefined);
     setImageSrc(undefined);
+    setPdfSrc(undefined);
     // console.log(messages[messages.length - 1].file?.name)
     // console.log(newMessage)
   };
@@ -88,6 +89,7 @@ export default function Footer() {
     setMessage("");
     setFile(undefined);
     setImageSrc(undefined);
+    setPdfSrc(undefined);
     // console.log(messages[messages.length - 1].file?.name)
     // console.log(newMessage)
   };
@@ -178,6 +180,7 @@ export default function Footer() {
               <input
                 type="file"
                 ref={fileInputRef}
+                accept="application/pdf"
                 style={{ display: 'none' }}
                 onChange={handleFileChange2}
                 value={''} />

@@ -1,4 +1,4 @@
-import { forwardRef, useContext, useEffect, useMemo } from "react";
+import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Icon from "common/components/icons";
@@ -16,6 +16,10 @@ import {
   MessageGroup,
 } from "./styles";
 import { MyContext } from "../my-context/MyContext";
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 type MessagesListProps = {
   onShowBottomIcon: Function;
@@ -24,6 +28,8 @@ type MessagesListProps = {
 
 export default function MessagesList(props: MessagesListProps) {
   const { onShowBottomIcon, shouldScrollToBottom } = props;
+  const [numPages, setNumPages] = useState(null);
+
 
   const { items, setItems } = useContext(MyContext);
 
@@ -39,6 +45,10 @@ export default function MessagesList(props: MessagesListProps) {
     return items;
   }, [params.id, items]);
 
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
 
 
 
@@ -94,13 +104,14 @@ const SingleMessage = forwardRef((props: { message: Message }, ref: any) => {
       }
       {message?.pdfurl && (
         <div>
-          <iframe
-            title="PDF Viewer"
-            src={message?.pdfurl}
-            width="100%"
-            height="150px"
-            style={{ border: 'none' }}
-          />
+          <Document
+            file={message?.pdfurl}
+          // onLoadSuccess={}
+          >
+            {Array.from(new Array(2), (el, index) => (
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            ))}
+          </Document>
         </div>
       )}
       <span>{message.body}</span>
